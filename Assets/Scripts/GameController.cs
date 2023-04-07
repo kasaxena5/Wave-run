@@ -6,25 +6,35 @@ public class GameController : MonoBehaviour
 {
     [SerializeField] private LineController line;
     private List<Vector2> points;
-    public float speed;
+    [SerializeField] private float width = 10;
+    [SerializeField] private float stepSize = 1;
+    [SerializeField] private float xOffset = 0;
+    [SerializeField] private float yOffset = 0;
+    [SerializeField] private float scale = 1;
+    [SerializeField] private float heightScale = 3;
+    [SerializeField] private float speed;
 
     void Start()
     {
+        SetupLine();
+    }
+
+    private void SetupLine()
+    {
         points = new();
-        for(int i = 0; i < 10; i++)
+        for (float i = -width; i <= width; i += stepSize)
         {
-            points.Add(new Vector2(i, 10 * i));
+            float x = (((float)i / (float)width) * scale) + xOffset;
+            float height = Mathf.PerlinNoise(x, yOffset);
+            points.Add(new Vector2(i, heightScale * height));
         }
         line.SetupLine(points.ToArray());
     }
 
     void Update()
     {
-        for(int i= 0; i < 10; i++)
-        {
-            points[i] = new Vector2(points[i].x - speed, points[i].y);
-        }
-        line.SetupLine(points.ToArray());
+        xOffset += (speed * Time.deltaTime);
+        SetupLine();
 
     }
 }
