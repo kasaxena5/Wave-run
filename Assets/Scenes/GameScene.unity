@@ -382,6 +382,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upperLine: {fileID: 1153478029}
   lowerLine: {fileID: 382328600}
+  playerPrefab: {fileID: -7517778131384902482, guid: 9f1dff2d109291e488c02fc969bd4d15, type: 3}
   obstaclePrefab: {fileID: 5177078672864931109, guid: e98b006f269aae140a7686262b0526f3, type: 3}
   width: 10
   stepSize: 0.2
@@ -393,6 +394,8 @@ MonoBehaviour:
   heightScale: 5
   speed: 1
   obstacleWaitTime: 2
+  minObstacleWidth: 0.6
+  maxObstacleWidth: 1.2
 --- !u!4 &1112248409
 Transform:
   m_ObjectHideFlags: 0

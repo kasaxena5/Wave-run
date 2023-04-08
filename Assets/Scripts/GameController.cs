@@ -1,13 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
+    [SerializeField] private Text scoreText;
     [SerializeField] private LineController upperLine;
     [SerializeField] private LineController lowerLine;
 
+    [SerializeField] private PlayerController playerPrefab;
     [SerializeField] private ObstacleController obstaclePrefab;
+
+    private PlayerController player;
     private Queue<ObstacleController> obstacles;
     
     private List<Vector2> upperLinePoints;
@@ -27,6 +32,10 @@ public class GameController : MonoBehaviour
     [SerializeField] private float speed = 1f;
 
     [SerializeField] private float obstacleWaitTime = 2;
+    [SerializeField] private float minObstacleWidth = 0.4f;
+    [SerializeField] private float maxObstacleWidth = 0.8f;
+
+    private int score = 0;
 
     private void Awake()
     {
@@ -37,11 +46,26 @@ public class GameController : MonoBehaviour
     {
         SetupLines();
         StartCoroutine(SpawnObstacles());
+        StartCoroutine(StartScore());
+        player = Instantiate(playerPrefab);
     }
 
     void SetupPlayer()
     {
+        float x =  (player.pos == 0) ? upperLineXOffset : lowerLineXOffset;
+        float height = Mathf.PerlinNoise(x, 0);
+        float heightOffset = (player.pos == 0) ? upperLineHeightOffset : lowerLineHeightOffset;
+        player.transform.position = new Vector2(0, (heightScale * height) + heightOffset);
+    }
 
+    IEnumerator StartScore()
+    {
+        while(true)
+        {
+            score++;
+            scoreText.text = "Score: " + score;
+            yield return new WaitForSeconds(0.5f);
+        }
     }
 
     IEnumerator SpawnObstacles()
@@ -50,9 +74,12 @@ public class GameController : MonoBehaviour
         while(true)
         {
             ObstacleController obstacle = Instantiate(obstaclePrefab);
+            float rand = Random.value;
+            
+            obstacle.width = Random.Range(minObstacleWidth, maxObstacleWidth);
             obstacle.position = width + obstacle.width;
-            obstacle.xOffset = upperLineXOffset;
-            obstacle.heightOffset = upperLineHeightOffset;
+            obstacle.xOffset = (rand > 0.5) ? upperLineXOffset : lowerLineXOffset;
+            obstacle.heightOffset = (rand > 0.5) ? upperLineHeightOffset: lowerLineHeightOffset;
             obstacles.Enqueue(obstacle);
             yield return new WaitForSeconds(obstacleWaitTime);
         }
@@ -62,8 +89,9 @@ public class GameController : MonoBehaviour
     {
         foreach(ObstacleController obstacle in obstacles)
         {
-            SetupLine(obstacle, upperLineXOffset, obstacle.heightOffset, obstacle.width, obstacle.position);
+            SetupLine(obstacle, obstacle.xOffset, obstacle.heightOffset, obstacle.width, obstacle.position);
             obstacle.position -= (width/scale * Time.deltaTime);
+            obstacle.xOffset += (speed * Time.deltaTime);
         }
 
         if (obstacles.TryPeek(out ObstacleController top))
@@ -99,6 +127,7 @@ public class GameController : MonoBehaviour
 
     void Update()
     {
+        SetupPlayer();
         SetupLines();
         SetupObstacles();
     }
