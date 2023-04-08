@@ -380,6 +380,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d37ad4acc452944dbd1881bb79aa5db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scoreText: {fileID: 1670127984}
   upperLine: {fileID: 1153478029}
   lowerLine: {fileID: 382328600}
   playerPrefab: {fileID: -7517778131384902482, guid: 9f1dff2d109291e488c02fc969bd4d15, type: 3}
